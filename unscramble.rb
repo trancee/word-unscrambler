@@ -1,45 +1,48 @@
-def getDictionary
-  dictionary = Hash.new
+class Unscramble
+  def initialize()
+    @dictionary = Hash.new
 
-  File.open("dictionary.txt", "r") do |f|
-    f.each_line do |line|
-      alphabet = Hash.new
+    File.open("dictionary.txt", "r") do |f|
+      f.each_line do |line|
+        alphabet = Hash.new
 
-      line.delete!("\n")
-      line.each_char do |i|
-        alphabet[i] = (alphabet[i] || 0) + 1
+        line.delete!("\n")
+        line.each_char do |i|
+          alphabet[i] = (alphabet[i] || 0) + 1
+        end
+
+        @dictionary[line] = alphabet
       end
-
-      dictionary[line] = alphabet
     end
   end
 
-  return dictionary
-end
+  def compare(word)
+    alphabet = Hash.new
 
-def compare(word, dictionary)
-  alphabet = Hash.new
-
-  word.each_char do |i|
-    alphabet[i] = (alphabet[i] || 0) + 1
-  end
-
-  dictionary.each do |key, hash|
-    if alphabet == hash
-      puts "Answer: " + key
-      return true
+    word.each_char do |i|
+      alphabet[i] = (alphabet[i] || 0) + 1
     end
-  end
 
-  return false
+    @dictionary.each do |key, hash|
+      if alphabet == hash
+        return key
+      end
+    end
+
+    return false
+  end
 end
 
-dictionary = getDictionary
-#puts dictionary
+
 
 word = ARGV[0]
-#puts word
 
-if !compare(word, dictionary)
-  puts "Sorry, no solution are possible."
+if word
+  answer = Unscramble.new().compare(word)
+
+  if answer
+    puts "Answer: " + answer
+  else
+    puts "Sorry, no solution are possible."
+  end
 end
